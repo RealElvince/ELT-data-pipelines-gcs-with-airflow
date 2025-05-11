@@ -26,7 +26,7 @@
 # ) as dag:
 #     for country in countries:
 #        BigqueryInsertJobOperator(
-#         task_id=f"create_table.{country.lower()}",
+#         task_id=f"create_table_{country.lower()}",
 #         configuration={
 #             "query":{
 #                 "query":f"""
