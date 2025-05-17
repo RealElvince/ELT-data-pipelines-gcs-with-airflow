@@ -100,6 +100,29 @@ with DAG(
         },
     )
     split_country_data_tasks.append(split_task)
+
+      # Task to create view for each country-specific table with selected columns and filter
+    for country in countries:
+       create_countries_views = BigQueryInsertJobOperator(
+        task_id=f"create_{country.lower()}_view",
+        configuration={
+            "query": {
+                "query": f"""
+                    CREATE OR REPLACE VIEW `{PROJECT_ID}.{TRANSFORMATION_DATASET}.{country.lower()}_view` AS
+                    SELECT
+                      `Year` AS `year`, 
+                            `Disease Name` AS `disease_name`, 
+                            `Disease Category` AS `disease_category`, 
+                            `Prevalence Rate` AS `prevalence_rate`, 
+                            `Incidence Rate` AS `incidence_rate`
+                    FROM
+                      `{PROJECT_ID}.{TRANSFORMATION_DATASET}.{country.lower()}_table`
+                    WHERE `Availability of Vaccines Treatment` = False
+                """,
+                "useLegacySql": False,
+            }
+        }
+    )
     
 
     # define dependencies
@@ -108,6 +131,7 @@ with DAG(
         >>check_if_file_exists
         >>load_csv_to_bq
         >>[*split_country_data_tasks]
+        >> create_countries_views
         >>end_task
     )
 
