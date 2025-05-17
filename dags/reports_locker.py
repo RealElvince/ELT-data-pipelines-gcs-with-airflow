@@ -1,6 +1,6 @@
 from airflow import DAG
 from datetime import datetime
-from airflow.providers.google.cloud.operators import BigqueryInsertJobOperator
+from airflow.providers.google.cloud.operators import BigQueryInsertJobOperator
 from dotenv import load_dotenv
 import os
 
@@ -32,7 +32,7 @@ with DAG(
     
     # Task to create view for each country-specific table with selected columns and filter
    for country in countries:
-       create_countries_views = BigqueryInsertJobOperator(
+       create_countries_views = BigQueryInsertJobOperator(
         task_id=f"create_{country.lower()}_view",
         configuration={
             "query": {
