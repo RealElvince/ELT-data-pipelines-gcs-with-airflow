@@ -132,7 +132,7 @@ with DAG(
     start_task >> check_if_file_exists >> load_csv_to_bq
     
     for split_task, view_task in zip(split_tasks, view_tasks):
-        load_csv_to_bq >> split_task >> view_task
+        load_csv_to_bq >> split_task >> view_task >> end_task
         
 
     
