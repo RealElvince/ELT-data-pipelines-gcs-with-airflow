@@ -82,8 +82,10 @@ with DAG(
         autodetect=True
     )
 
-    # Task 3: split global health data by country
+    # Task 3: split global health data by country and create tables and views
+    # Task to create table for each country-specific table
     split_country_data_tasks = []
+    create_countries_views_tasks = []
     for country in countries:
        split_task = BigQueryInsertJobOperator(
         task_id=f"create_table_{country.lower()}",
@@ -99,12 +101,8 @@ with DAG(
             }
         },
     )
-    split_country_data_tasks.append(split_task)
-
-    #   Task to create view for each country-specific table with selected columns and filter
-    create_countries_views_tasks= []
-    for country in countries:
-       view_tasks= BigQueryInsertJobOperator(
+    # Task to create view for each country-specific table with selected columns and filter
+    view_tasks= BigQueryInsertJobOperator(
         task_id=f"create_{country.lower()}_view",
         configuration={
             "query": {
@@ -124,13 +122,20 @@ with DAG(
             }
         }
     )
+    
+    # set dependencies for table and view creation
+    split_task.set_upstream(load_csv_to_bq)
+    view_tasks.set_upstream(split_task)
+
+    split_country_data_tasks.append(split_task)
     create_countries_views_tasks.append(view_tasks)
+
+    
+    
     
 
     # define dependencies
     start_task >> check_if_file_exists >> load_csv_to_bq
 
     for split_task, view_task in zip(split_country_data_tasks, create_countries_views_tasks):
-       load_csv_to_bq >> split_task >> view_task
-
-    create_countries_views_tasks >> end_task
+       split_task >> view_task>>end_task
