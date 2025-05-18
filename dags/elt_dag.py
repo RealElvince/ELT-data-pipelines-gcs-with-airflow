@@ -132,8 +132,8 @@ with DAG(
         start_task
         >>check_if_file_exists
         >>load_csv_to_bq
-        >>[*split_country_data_tasks]
-        >>[*create_countries_views]
+        >>split_country_data_tasks
+        >>create_countries_views
         >>end_task
     )
 
