@@ -109,7 +109,7 @@ with DAG(
         configuration={
             "query": {
                 "query": f"""
-                    CREATE OR REPLACE VIEW `{PROJECT_ID}.{TRANSFORMATION_DATASET}.{country.lower()}_view` AS
+                    CREATE OR REPLACE VIEW `{PROJECT_ID}.{REPORTS_DATASET}.{country.lower()}_view` AS
                     SELECT
                       `Year` AS `year`, 
                             `Disease Name` AS `disease_name`, 
