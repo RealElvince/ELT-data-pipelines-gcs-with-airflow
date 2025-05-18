@@ -131,6 +131,6 @@ with DAG(
     start_task >> check_if_file_exists >> load_csv_to_bq
 
     for split_task, view_task in zip(split_country_data_tasks, create_countries_views_tasks):
-       load_csv_to_bq >> split_task >> view_task >> end_task
+       load_csv_to_bq >> split_task >> view_task
 
-  
+    create_countries_views_tasks >> end_task
