@@ -102,7 +102,7 @@ with DAG(
     split_country_data_tasks.append(split_task)
 
     #   Task to create view for each country-specific table with selected columns and filter
-    create_countries_views = []
+    create_countries_views_tasks= []
     for country in countries:
        view_tasks= BigQueryInsertJobOperator(
         task_id=f"create_{country.lower()}_view",
@@ -124,20 +124,13 @@ with DAG(
             }
         }
     )
-    create_countries_views.append(view_tasks)
+    create_countries_views_tasks.append(view_tasks)
     
 
     # define dependencies
-    (
-        start_task
-        >>check_if_file_exists
-        >>load_csv_to_bq
-        >>split_country_data_tasks
-        >>create_countries_views
-        >>end_task
-    )
+    start_task >> check_if_file_exists >> load_csv_to_bq
 
-    # start_task >> check_if_file_exists >> load_csv_to_bq
+    for split_task, view_task in zip(split_country_data_tasks, create_countries_views_tasks):
+       load_csv_to_bq >> split_task >> view_task >> end_task
 
-    # for slit_task in split_country_data_tasks:
-    #     load_csv_to_bq >> split_task
+  
