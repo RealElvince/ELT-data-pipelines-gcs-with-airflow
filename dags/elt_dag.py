@@ -30,7 +30,7 @@ REPORTING_DATASET = os.getenv('REPORTING_DATASET')
 HEALTH_DATASET = os.getenv('HEALTH_DATASET')
 
 # List of countries to generate specific tables and views for
-countries = ['US','UK', 'India', 'Mexico','Canada','Germany','France','Italy','Spain','Russia']
+countries = ['USA','UK', 'India', 'Mexico','Canada','Germany','France','Italy','Nigeria','Russia']
 
 # Validate required environment variables
 required_vars = [BUCKET_NAME, SOURCE_OBJECT, DESTINATION_PROJECT_DATASET_TABLE, BIGQUERY_TABLE]
